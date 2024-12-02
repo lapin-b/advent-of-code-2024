@@ -18,6 +18,7 @@ public static class Program
 
         // Part 1
         Part1(leftList, rightList);
+        Part2(leftList, rightList);
     }
 
     private static void Part1(List<int> leftList, List<int> rightList)
@@ -41,5 +42,21 @@ public static class Program
         
         var total = differences.Sum();
         Console.WriteLine($"Part 1: Total differences: {total}");
+    }
+
+    private static void Part2(List<int> leftList, List<int> rightList)
+    {
+        var similarities = new List<int>();
+        
+        foreach (var itemLeft in leftList)
+        {
+            var rightListItemFrequency = rightList.Count(x => x == itemLeft);
+            var similarityScore = itemLeft * rightListItemFrequency;
+            similarities.Add(similarityScore);
+
+            Console.WriteLine($"{itemLeft} appears {rightListItemFrequency} times --> {similarityScore}");
+        }
+        
+        Console.WriteLine($"Part 2: Total similarities: {similarities.Sum()}");
     }
 }
