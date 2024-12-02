@@ -1,4 +1,4 @@
-# Advent of code 2025 - Solutions
+# Advent of code 2024 - Solutions
 
 This repository contains possible solutions for the Advent of Code event, edition 2024.
 
