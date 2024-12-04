@@ -20,7 +20,7 @@ public class LetterGrid
         {
             return null;
         }
-        
+
         return _grid[y][x];
     }
 
@@ -45,52 +45,52 @@ public class LetterGrid
         {
             count++;
         }
-        
+
         // Right to left
         if (this[x, y] == 'S' && this[x + 1, y] == 'A' && this[x + 2, y] == 'M' && this[x + 3, y] == 'X')
         {
             count++;
         }
-        
+
         // Top to bottom
         if (this[x, y] == 'X' && this[x, y + 1] == 'M' && this[x, y + 2] == 'A' && this[x, y + 3] == 'S')
         {
             count++;
         }
-        
+
         // Bottom to top
         if (this[x, y] == 'S' && this[x, y + 1] == 'A' && this[x, y + 2] == 'M' && this[x, y + 3] == 'X')
         {
             count++;
         }
-        
+
         // Top-left to bottom-right diagonal
         if (this[x, y] == 'X' && this[x + 1, y + 1] == 'M' && this[x + 2, y + 2] == 'A' && this[x + 3, y + 3] == 'S')
         {
             count++;
         }
-        
+
         // Bottom-right to top-left diagonal
         if (this[x, y] == 'S' && this[x + 1, y + 1] == 'A' && this[x + 2, y + 2] == 'M' && this[x + 3, y + 3] == 'X')
         {
             count++;
         }
-        
+
         // Top-right to bottom-left diagonal 
-        if (this[x, y] == 'X' && this[x - 1, y + 1] == 'M' && this[x - 2 , y + 2] == 'A' && this[x - 3, y + 3] == 'S')
+        if (this[x, y] == 'X' && this[x - 1, y + 1] == 'M' && this[x - 2, y + 2] == 'A' && this[x - 3, y + 3] == 'S')
         {
             count++;
         }
-        
+
         // Bottom-left to top-right diagonal 
-        if (this[x, y] == 'S' && this[x - 1, y + 1] == 'A' && this[x - 2 , y + 2] == 'M' && this[x - 3, y + 3] == 'X')
+        if (this[x, y] == 'S' && this[x - 1, y + 1] == 'A' && this[x - 2, y + 2] == 'M' && this[x - 3, y + 3] == 'X')
         {
             count++;
         }
-        
+
         return count;
     }
-    
+
     // Part 2
     public int CountMasInXAt(int x, int y)
     {
@@ -98,28 +98,22 @@ public class LetterGrid
         {
             return 0;
         }
-        
+
         var count = 0;
-        // Top-left to bottom-right diagonal
-        if (this[x - 1, y - 1] == 'M' && this[x + 1, y + 1] == 'S')
+        // Top-left to bottom-right diagonal || bottom-right to top-left diagonal
+        if (
+            (this[x - 1, y - 1] == 'M' && this[x + 1, y + 1] == 'S') ||
+            (this[x - 1, y - 1] == 'S' && this[x + 1, y + 1] == 'M')
+        )
         {
             count++;
         }
-        
-        // Bottom-right to top-left diagonal
-        if (this[x + 1, y + 1] == 'M' && this[x - 1, y - 1] == 'S')
-        {
-            count++;
-        }
-        
-        // Top-right to bottom-left diagonal 
-        if (this[x + 1, y - 1] == 'M' && this[x - 1 , y + 1] == 'S')
-        {
-            count++;
-        }
-        
-        // Bottom-left to top-right diagonal 
-        if (this[x - 1 , y + 1] == 'M' && this[x + 1, y - 1] == 'S')
+
+        // Top-right to bottom-left diagonal || bottom-left to top-right diagonal 
+        if (
+            (this[x + 1, y - 1] == 'M' && this[x - 1, y + 1] == 'S') ||
+            (this[x + 1, y - 1] == 'S' && this[x - 1, y + 1] == 'M')
+        )
         {
             count++;
         }
