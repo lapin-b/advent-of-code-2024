@@ -1,89 +1,102 @@
+using AOCUtils;
+
 namespace Day4;
 
-public class LetterGrid
+public class LetterGrid : Grid<char>
 {
-    private char[][] _grid;
-
-    public LetterGrid(string[] grid)
-    {
-        _grid = grid.Select(line => line.ToCharArray()).ToArray();
-    }
-
-    public char? ElementAt(int x, int y)
-    {
-        if (
-            y < 0 ||
-            y > _grid.Length - 1 ||
-            x < 0 ||
-            x > _grid[y].Length - 1
-        )
-        {
-            return null;
-        }
-
-        return _grid[y][x];
-    }
-
-    public IEnumerable<LetterGridItem> GridElements()
-    {
-        for (var y = 0; y < _grid.Length; y++)
-        {
-            for (var x = 0; x < _grid[y].Length; x++)
-            {
-                yield return new LetterGridItem(x, y, _grid[y][x]);
-            }
-        }
-    }
-
     // Part 1
+    public LetterGrid(string[] grid) : base(grid.Select(line => line.ToCharArray()).ToArray())
+    {
+    }
+
     public int CountXmasAt(int x, int y)
     {
         var count = 0;
 
         // Left to right
-        if (this[x, y] == 'X' && this[x + 1, y] == 'M' && this[x + 2, y] == 'A' && this[x + 3, y] == 'S')
+        if (
+            this[x, y] == 'X'
+            && ElementAtRelative(x, y, GridRelativeVector.Right, 1) == 'M'
+            && ElementAtRelative(x, y, GridRelativeVector.Right, 2) == 'A'
+            && ElementAtRelative(x, y, GridRelativeVector.Right, 3) == 'S'
+        )
         {
             count++;
         }
 
         // Right to left
-        if (this[x, y] == 'S' && this[x + 1, y] == 'A' && this[x + 2, y] == 'M' && this[x + 3, y] == 'X')
+        if (
+            this[x, y] == 'S'
+            && ElementAtRelative(x, y, GridRelativeVector.Right, 1) == 'A'
+            && ElementAtRelative(x, y, GridRelativeVector.Right, 2) == 'M'
+            && ElementAtRelative(x, y, GridRelativeVector.Right, 3) == 'X'
+        )
         {
             count++;
         }
 
         // Top to bottom
-        if (this[x, y] == 'X' && this[x, y + 1] == 'M' && this[x, y + 2] == 'A' && this[x, y + 3] == 'S')
+        if (
+            this[x, y] == 'X' &&
+            ElementAtRelative(x, y, GridRelativeVector.Top, 1) == 'M' &&
+            ElementAtRelative(x, y, GridRelativeVector.Top, 2) == 'A' &&
+            ElementAtRelative(x, y, GridRelativeVector.Top, 3) == 'S'
+        )
         {
             count++;
         }
 
         // Bottom to top
-        if (this[x, y] == 'S' && this[x, y + 1] == 'A' && this[x, y + 2] == 'M' && this[x, y + 3] == 'X')
+        if (
+            this[x, y] == 'S' &&
+            ElementAtRelative(x, y, GridRelativeVector.Top, 1) == 'A' &&
+            ElementAtRelative(x, y, GridRelativeVector.Top, 2) == 'M' &&
+            ElementAtRelative(x, y, GridRelativeVector.Top, 3) == 'X'
+        )
         {
             count++;
         }
 
         // Top-left to bottom-right diagonal
-        if (this[x, y] == 'X' && this[x + 1, y + 1] == 'M' && this[x + 2, y + 2] == 'A' && this[x + 3, y + 3] == 'S')
+        if (
+            this[x, y] == 'X' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownRight, 1) == 'M' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownRight, 2) == 'A' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownRight, 3) == 'S'
+        )
         {
             count++;
         }
 
         // Bottom-right to top-left diagonal
-        if (this[x, y] == 'S' && this[x + 1, y + 1] == 'A' && this[x + 2, y + 2] == 'M' && this[x + 3, y + 3] == 'X')
+        if (
+            this[x, y] == 'S' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownRight, 1) == 'A' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownRight, 2) == 'M' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownRight, 3) == 'X'
+        )
         {
             count++;
         }
 
         // Top-right to bottom-left diagonal 
-        if (this[x, y] == 'X' && this[x - 1, y + 1] == 'M' && this[x - 2, y + 2] == 'A' && this[x - 3, y + 3] == 'S')
+        if (
+            this[x, y] == 'X' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownLeft, 1) == 'M' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownLeft, 2) == 'A' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownLeft, 3) == 'S'
+        )
         {
             count++;
         }
 
         // Bottom-left to top-right diagonal 
-        if (this[x, y] == 'S' && this[x - 1, y + 1] == 'A' && this[x - 2, y + 2] == 'M' && this[x - 3, y + 3] == 'X')
+        if (
+            this[x, y] == 'S' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownLeft, 1) == 'A' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownLeft, 2) == 'M' &&
+            ElementAtRelative(x, y, GridRelativeVector.DownLeft, 3) == 'X'
+        )
         {
             count++;
         }
@@ -102,8 +115,13 @@ public class LetterGrid
         var count = 0;
         // Top-left to bottom-right diagonal || bottom-right to top-left diagonal
         if (
-            (this[x - 1, y - 1] == 'M' && this[x + 1, y + 1] == 'S') ||
-            (this[x - 1, y - 1] == 'S' && this[x + 1, y + 1] == 'M')
+            (
+                ElementAtRelative(x, y, GridRelativeVector.TopLeft, 1) == 'M' &&
+                ElementAtRelative(x, y, GridRelativeVector.DownRight, 1) == 'S'
+            ) || (
+                ElementAtRelative(x, y, GridRelativeVector.TopLeft, 1) == 'S' &&
+                ElementAtRelative(x, y, GridRelativeVector.DownRight, 1) == 'M'
+            )
         )
         {
             count++;
@@ -111,8 +129,13 @@ public class LetterGrid
 
         // Top-right to bottom-left diagonal || bottom-left to top-right diagonal 
         if (
-            (this[x + 1, y - 1] == 'M' && this[x - 1, y + 1] == 'S') ||
-            (this[x + 1, y - 1] == 'S' && this[x - 1, y + 1] == 'M')
+            (
+                ElementAtRelative(x, y, GridRelativeVector.TopRight, 1) == 'M' &&
+                ElementAtRelative(x, y, GridRelativeVector.DownLeft, 1) == 'S'
+            ) || (
+                ElementAtRelative(x, y, GridRelativeVector.TopRight, 1) == 'S' &&
+                ElementAtRelative(x, y, GridRelativeVector.DownLeft, 1) == 'M'
+            )
         )
         {
             count++;
@@ -120,8 +143,4 @@ public class LetterGrid
 
         return count == 2 ? 1 : 0;
     }
-
-    public char? this[int x, int y] => ElementAt(x, y);
 }
-
-public record LetterGridItem(int X, int Y, char Letter);
