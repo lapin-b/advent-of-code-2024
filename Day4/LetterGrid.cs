@@ -35,6 +35,7 @@ public class LetterGrid
         }
     }
 
+    // Part 1
     public int CountXmasAt(int x, int y)
     {
         var count = 0;
@@ -88,6 +89,42 @@ public class LetterGrid
         }
         
         return count;
+    }
+    
+    // Part 2
+    public int CountMasInXAt(int x, int y)
+    {
+        if (this[x, y] != 'A')
+        {
+            return 0;
+        }
+        
+        var count = 0;
+        // Top-left to bottom-right diagonal
+        if (this[x - 1, y - 1] == 'M' && this[x + 1, y + 1] == 'S')
+        {
+            count++;
+        }
+        
+        // Bottom-right to top-left diagonal
+        if (this[x + 1, y + 1] == 'M' && this[x - 1, y - 1] == 'S')
+        {
+            count++;
+        }
+        
+        // Top-right to bottom-left diagonal 
+        if (this[x + 1, y - 1] == 'M' && this[x - 1 , y + 1] == 'S')
+        {
+            count++;
+        }
+        
+        // Bottom-left to top-right diagonal 
+        if (this[x - 1 , y + 1] == 'M' && this[x + 1, y - 1] == 'S')
+        {
+            count++;
+        }
+
+        return count == 2 ? 1 : 0;
     }
 
     public char? this[int x, int y] => ElementAt(x, y);

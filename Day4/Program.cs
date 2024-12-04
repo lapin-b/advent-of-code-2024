@@ -7,13 +7,10 @@ class Program
         var content = File.ReadAllText("files/input.txt").Trim().Split(Environment.NewLine);
         var grid = new LetterGrid(content);
 
-        var acc = 0;
-        foreach (var element in grid.GridElements())
-        {
-            //Console.WriteLine($"{element.X}, {element.Y} = {element.Letter}");
-            acc += grid.CountXmasAt(element.X, element.Y);
-        }
+        var xmasCount = grid.GridElements().Sum(element => grid.CountXmasAt(element.X, element.Y));
+        var masCount = grid.GridElements().Sum(element => grid.CountMasInXAt(element.X, element.Y));
 
-        Console.WriteLine("Acc: " + acc);
+        Console.WriteLine($"Part 1: XMAS count: {xmasCount}");
+        Console.WriteLine($"Part 2: X-MAS count: {masCount}");
     }
 }
