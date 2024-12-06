@@ -32,6 +32,15 @@ class Program
             .Sum();
         
         Console.WriteLine($"Part 1: {correctlyPrintedUpdatesMiddlePageTotal}");
+        
+        // Part 2
+        var correctedPrintedUpdates = updates
+            .Where(u => !IsCorrectlySorted(u, sortRules))
+            .Select(u => u.OrderBy(p => p, new UpdatePageRuleComparator(sortRules)).ToArray())
+            .ToArray();
+        
+        var correctedPrintedUpdatesSum = correctedPrintedUpdates.Select(u => u[u.Length / 2]).Sum();
+        Console.WriteLine($"Part 2: {correctedPrintedUpdatesSum}");
     }
 
     private static bool IsCorrectlySorted(int[] pages, PageSortRule[] rules)
@@ -42,15 +51,8 @@ class Program
 
         foreach (var rule in applicableRules)
         {
-            var orderingBoundaryPosition = pages
-                .Select((page, index) => new { Page = page, Index = index })
-                .First(p => p.Page == rule.OrderingBoundary)
-                .Index;
-            
-            var printedBeforeBoundaryPosition = pages.
-                Select((page, index) => new { Page = page, Index = index })
-                .First(p => p.Page == rule.PrintedBeforeBoundary)
-                .Index;
+            var orderingBoundaryPosition = pages.IndexForPage(rule.OrderingBoundary);
+            var printedBeforeBoundaryPosition = pages.IndexForPage(rule.PrintedBeforeBoundary);
 
             if (printedBeforeBoundaryPosition > orderingBoundaryPosition)
             {
