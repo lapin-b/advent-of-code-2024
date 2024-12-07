@@ -23,32 +23,27 @@ public class Grid<TGridItem> where TGridItem: struct
         }
     }
 
-    public TGridItem? this[GridPoint point] => this[point.X, point.Y];
-
-    public TGridItem? ElementAtRelative(int x, int y, GridRelativeVector direction, int relativePosition)
+    public TGridItem? this[GridPoint point]
     {
-        if (relativePosition == 0)
+        get
         {
-            return this[x, y];
+            if (!CoordinatesAreInGridBounds(point.X, point.Y))
+            {
+                return CoalesceNonExistingValues ? null : throw new IndexOutOfRangeException($"({point}) is not a valid coordinate in the grid");
+            }
+
+            return _grid[point.Y][point.X];
         }
-        
-        return direction switch
-        {
-            GridRelativeVector.Top => this[x, y - relativePosition],
-            GridRelativeVector.Down => this[x, y + relativePosition],
-            GridRelativeVector.Left => this[x - relativePosition, y],
-            GridRelativeVector.Right => this[x + relativePosition, y],
-            GridRelativeVector.TopRight => this[x + relativePosition, y - relativePosition],
-            GridRelativeVector.DownRight => this[x + relativePosition, y + relativePosition],
-            GridRelativeVector.TopLeft => this[x - relativePosition, y - relativePosition],
-            GridRelativeVector.DownLeft => this[x - relativePosition, y + relativePosition],
-            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
-        };
     }
-    
-    public TGridItem? ElementAtRelative(GridPoint point, GridRelativeVector direction, int relativePosition) =>
-        ElementAtRelative(point.X, point.Y, direction, relativePosition);
-    
+
+    [Obsolete("Use GridPoint.AddVector and this[gridPoint] instead")]
+    public TGridItem? ElementAtRelative(int x, int y, GridRelativeVector direction, int relativePosition) => 
+        ElementAtRelative(new GridPoint(x, y), direction, relativePosition);
+
+    [Obsolete("Use GridPoint.AddVector and this[gridPoint] instead")]
+    public TGridItem? ElementAtRelative(GridPoint point, GridRelativeVector direction, int relativePosition) => 
+        this[point.AddVector(direction, relativePosition)];
+
     public IEnumerable<LetterGridItem<TGridItem>> Traverse()
     {
         for (var y = 0; y < _grid.Length; y++)

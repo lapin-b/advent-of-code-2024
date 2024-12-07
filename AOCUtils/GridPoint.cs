@@ -7,6 +7,11 @@ public readonly struct GridPoint(int x, int y)
 
     public GridPoint AddVector(GridRelativeVector direction, int distance)
     {
+        if (distance == 0)
+        {
+            return this;
+        }
+        
         return direction switch
         {
             GridRelativeVector.Top => new(X, Y - distance),
