@@ -13,7 +13,7 @@ class Program
             guard.Step();
         }
 
-        var distinctSpotsVisited = map.VisitedPoints.Count;
+        var distinctSpotsVisited = guard.DistinctVisitedPoints.Count;
         Console.WriteLine($"Part 1: Guard has visites {distinctSpotsVisited} distinct spots before getting out of the zone");
     }
 }

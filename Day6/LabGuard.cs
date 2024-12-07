@@ -9,6 +9,7 @@ public class LabGuard
     private readonly GuardPatrolingMap _map;
     private GridPoint _currentCoords;
     private GridRelativeVector _currentDirection;
+    public HashSet<GridPoint> DistinctVisitedPoints { get; } = [];
 
     public LabGuard(GuardPatrolingMap map)
     {
@@ -39,7 +40,7 @@ public class LabGuard
             return;
         }
 
-        _map.MarkAsVisited(_currentCoords);
+        MarkAsVisited(_currentCoords);
         _currentCoords = _currentCoords.AddVector(_currentDirection, 1);
     }
 
@@ -55,5 +56,7 @@ public class LabGuard
         };
     }
 
-    private bool NextStepIsObstacle() => _map.ElementAtRelative(_currentCoords, _currentDirection, 1) == OBSTACLE;
+    private bool NextStepIsObstacle() => _map[_currentCoords.AddVector(_currentDirection, 1)] == OBSTACLE;
+    
+    private void MarkAsVisited(GridPoint coords) => DistinctVisitedPoints.Add(coords);
 }
