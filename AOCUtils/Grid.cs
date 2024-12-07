@@ -14,10 +14,7 @@ public class Grid<TGridItem> where TGridItem: struct
     {
         get
         {
-            if (
-                y < 0 || y > _grid.Length - 1 ||
-                x < 0 || x > _grid[y].Length - 1
-            )
+            if (!CoordinatesAreInGridBounds(x, y))
             {
                 return CoalesceNonExistingValues ? null : throw new IndexOutOfRangeException($"({x}, {y}) is not a valid coordinate in the grid");
             }
@@ -25,6 +22,8 @@ public class Grid<TGridItem> where TGridItem: struct
             return _grid[y][x];
         }
     }
+
+    public TGridItem? this[GridPoint point] => this[point.X, point.Y];
 
     public TGridItem? ElementAtRelative(int x, int y, GridRelativeVector direction, int relativePosition)
     {
@@ -47,16 +46,23 @@ public class Grid<TGridItem> where TGridItem: struct
         };
     }
     
+    public TGridItem? ElementAtRelative(GridPoint point, GridRelativeVector direction, int relativePosition) =>
+        ElementAtRelative(point.X, point.Y, direction, relativePosition);
+    
     public IEnumerable<LetterGridItem<TGridItem>> Traverse()
     {
         for (var y = 0; y < _grid.Length; y++)
         {
             for (var x = 0; x < _grid[y].Length; x++)
             {
-                yield return new LetterGridItem<TGridItem>(x, y, _grid[y][x]);
+                yield return new LetterGridItem<TGridItem>(new GridPoint(x, y), _grid[y][x]);
             }
         }
     }
+
+    protected bool CoordinatesAreInGridBounds(int x, int y) => 
+        y >= 0 && y < _grid.Length && 
+        x >= 0 && x < _grid[y].Length;
 }
 
-public record LetterGridItem<T>(int X, int Y, T Item);
+public record LetterGridItem<T>(GridPoint Point, T Item);
