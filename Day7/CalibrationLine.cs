@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text.RegularExpressions;
 
 namespace Day7;
@@ -10,6 +11,7 @@ public class CalibrationLine
     private Operator[] _operators = [];
     private string _originalString;
     public SolvedState IsSolved { get; private set; } = SolvedState.NotTried;
+    public Operator[] Operators => _operators;
 
     private static Regex _extractionRegex = new(@"(?<Result>\d+): (?:(?<Operand>\d+) ?)+");
     
@@ -77,7 +79,10 @@ public class CalibrationLine
         var currentOperand = _operands[currentOperandPosition];
         
         // Step
-        foreach (var op in new[] { Operator.Add, Operator.Mul })
+        
+        // Note for part 2: Concatenating throws everything off because of implmentation details
+        // The concatenation operator is commented for this reason
+        foreach (var op in new[] { Operator.Add, Operator.Mul, /*Operator.Concat*/})
         {
             operators.Add(op);
             SolveEquationRecursive(
@@ -98,6 +103,7 @@ public class CalibrationLine
     {
         Operator.Mul => op1 * op2,
         Operator.Add => op1 + op2,
+        Operator.Concat => ulong.Parse(op1.ToString() + op2.ToString()),
         _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
     };
 }
@@ -106,6 +112,7 @@ public enum Operator
 {
     Mul,
     Add,
+    Concat,
 }
 
 public enum SolvedState
