@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Day3;
 
-public partial class Program
+public class Program
 {
     public static void Main()
     {
@@ -14,7 +14,7 @@ public partial class Program
 
     private static void Part1(string content)
     {
-        var mulInstructions = MulInstructionFinder().Matches(content);
+        var mulInstructions = MulInstructionFinder.Matches(content);
         var result = mulInstructions
             .Select(match =>
             {
@@ -28,7 +28,7 @@ public partial class Program
 
     private static void Part2(string content)
     {
-        var instructions = ConditionalMulInstructionFinder().Matches(content);
+        var instructions = ConditionalMulInstructionFinder.Matches(content);
         var result = instructions.Aggregate(new { Acc = 0, MulEnabled = true }, (state, instruction) =>
         {
             Console.WriteLine($"Found {instruction.Value}");
@@ -57,9 +57,6 @@ public partial class Program
         Console.WriteLine("Part 2: " + result.Acc);
     }
 
-    [GeneratedRegex(@"mul\((?<t1>\d+),(?<t2>\d+)\)")]
-    private static partial Regex MulInstructionFinder();
-    
-    [GeneratedRegex(@"do(?:n't)?\(\)|mul\((?<t1>\d+),(?<t2>\d+)\)")]
-    private static partial Regex ConditionalMulInstructionFinder();
+    private static Regex MulInstructionFinder = new(@"mul\((?<t1>\d+),(?<t2>\d+)\)");
+    private static Regex ConditionalMulInstructionFinder = new(@"do(?:n't)?\(\)|mul\((?<t1>\d+),(?<t2>\d+)\)");
 }
