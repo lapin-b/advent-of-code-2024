@@ -1,4 +1,6 @@
-﻿using System.IO.MemoryMappedFiles;
+﻿using System.Diagnostics;
+using System.IO.MemoryMappedFiles;
+using AOCUtils;
 
 namespace Day9;
 
@@ -16,6 +18,7 @@ class Program
 
         var inputExpandedSize = inputMap.Sum();
 
+        Console.WriteLine("Expanding disk map");
         using (var file = new BinaryWriter(File.Open(DiskFilename, FileMode.Create)))
         {
             file.Seek(0, SeekOrigin.Begin);
@@ -36,43 +39,24 @@ class Program
             }
         }
 
+        Console.WriteLine("Disk map expanded");
+
         if (File.Exists(DiskFilenamePart1))
             File.Delete(DiskFilenamePart1);
         
         File.Copy(DiskFilename, DiskFilenamePart1);
-        using var diskMap = new Diskmap(DiskFilenamePart1, inputExpandedSize);
-
-        for (var startOffset = 0; startOffset < inputExpandedSize; startOffset++)
+        using (var diskMap = new Diskmap(DiskFilenamePart1, inputExpandedSize))
         {
-            // Check what we have
-            if (diskMap.Read(startOffset) != Diskmap.EmptyBlockId)
-            {
-                // Console.WriteLine($"Existing block at {startOffset}");
-                continue;
-            }
-
-            // Console.WriteLine($"Empty block at {startOffset}");
-            // If we do have a hole, check from the end what data lives there and move it
-            var lastBlockPosition = diskMap.LastDataBlock(startOffset);
-            if (lastBlockPosition == null)
-            {
-                // We're done defragmenting, the rest should be empty blocks
-                break;
-            }
+            var defragTimeTaken = StopwatchUtils.WithTimer(() => diskMap.DefragmentPart1());
+            Console.WriteLine($"Part 1: Time taken for defrag {defragTimeTaken.TotalSeconds} seconds");
             
-            // Move the block from end to the block hole
-            // Not atomic. What is data consistency anyway ?
-            // Console.WriteLine($"Move {lastBlockPosition} to {startOffset}");
-            diskMap.Write(startOffset, diskMap.Read((int)lastBlockPosition));
-            diskMap.Write((int)lastBlockPosition, Diskmap.EmptyBlockId);
-        }
-        
-        // Calculate filesystem checksum
-        var part1Checksum = diskMap.BlocksInMap()
-            .Where(b => b is not null)
-            .Select((block, position) => (long)block! * position)
-            .Sum();
+            // Calculate filesystem checksum
+            var part1Checksum = diskMap.BlocksInMap()
+                .Where(b => b is not null)
+                .Select((block, position) => (long)block! * position)
+                .Sum();
 
-        Console.WriteLine($"Part 1 checksum: {part1Checksum}");
+            Console.WriteLine($"Part 1 checksum: {part1Checksum}");    
+        }
     }
 }

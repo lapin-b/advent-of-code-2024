@@ -45,6 +45,34 @@ public class Diskmap : IDisposable
             yield return rawBlock == EmptyBlockId ? null : rawBlock - BlockIdOffset;
         }
     }
+
+    public void DefragmentPart1()
+    {
+        for (var startOffset = 0; startOffset < _expandedMapSize; startOffset++)
+        {
+            // Check what we have
+            if (Read(startOffset) != EmptyBlockId)
+            {
+                // Console.WriteLine($"Existing block at {startOffset}");
+                continue;
+            }
+
+            // Console.WriteLine($"Empty block at {startOffset}");
+            // If we do have a hole, check from the end what data lives there and move it
+            var lastBlockPosition = LastDataBlock(startOffset);
+            if (lastBlockPosition == null)
+            {
+                // We're done defragmenting, the rest should be empty blocks
+                break;
+            }
+            
+            // Move the block from end to the block hole
+            // Not atomic. What is data consistency anyway ?
+            // Console.WriteLine($"Move {lastBlockPosition} to {startOffset}");
+            Write(startOffset, Read((int)lastBlockPosition));
+            Write((int)lastBlockPosition, EmptyBlockId);
+        }
+    }
     
     public void Dispose()
     {
